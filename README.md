@@ -4,6 +4,13 @@
 
 FlexiCubes is a high-quality isosurface representation specifically designed for gradient-based mesh optimization with respect to geometric, visual, or even physical objectives. For more details, please refer to our [paper](https://arxiv.org/abs/2308.05371) and [project page](https://research.nvidia.com/labs/toronto-ai/flexicubes/).
 
+## Highlights
+* [Getting started](https://github.com/nv-tlabs/FlexiCubes#getting-started)
+* [Basic workflow](https://github.com/nv-tlabs/FlexiCubes#example-usage)
+* [nvdiffrec: image-based reconstruction example](https://github.com/NVlabs/nvdiffrec#news)
+* [GET3D: generative AI example](https://github.com/nv-tlabs/GET3D#employing-flexicubes)
+* [Bibtex](https://github.com/nv-tlabs/FlexiCubes#citation)
+
 ## Getting Started
 
 The core functions of FlexiCubes are in `flexicubes.py`. To use FlexiCubes for your optimization tasks, you can directly copy `flexicubes.py` and `tables.py` into your project. It requires Python 3.6+, Cuda 11.3+ and PyTorch 1.10+. (Tested in Anaconda3 with Python 3.9 and PyTorch 1.11.)
@@ -65,9 +72,11 @@ If you are switching from our previous work, DMTet, it's important to note the d
 ## Applications
 FlexiCubes is now integrated into NVIDIA applications as a drop-in replacement for DMTet. You can visit their GitHub pages to see how FlexiCubes is used in advanced photogrammetry and 3D generative pipelines.
 
-[GET3D: A Generative Model of High Quality 3D Textured Shapes Learned from Images](https://github.com/nv-tlabs/GET3D)
+[Extracting Triangular 3D Models, Materials, and Lighting From Images (nvdiffrec)](https://github.com/NVlabs/nvdiffrec#news)
 
-[Extracting Triangular 3D Models, Materials, and Lighting From Images (nvdiffrec)](https://github.com/NVlabs/nvdiffrec)
+[GET3D: A Generative Model of High Quality 3D Textured Shapes Learned from Images](https://github.com/nv-tlabs/GET3D#employing-flexicubes)
+
+
 
 ## License
 Copyright (c) 2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
