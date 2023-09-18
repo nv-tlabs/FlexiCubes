@@ -83,9 +83,11 @@ Copyright (c) 2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 
 This work is made available under the [Nvidia Source Code License](LICENSE.txt).
 
+For business inquiries, please visit our website and submit the form: [NVIDIA Research Licensing](https://www.nvidia.com/en-us/research/inquiries/).
+
 ## Citation
 ```bibtex
-@article{10.1145/3592430,
+@article{shen2023flexicubes,
 author = {Shen, Tianchang and Munkberg, Jacob and Hasselgren, Jon and Yin, Kangxue and Wang, Zian 
         and Chen, Wenzheng and Gojcic, Zan and Fidler, Sanja and Sharp, Nicholas and Gao, Jun},
 title = {Flexible Isosurface Extraction for Gradient-Based Mesh Optimization},
