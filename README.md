@@ -13,7 +13,9 @@ FlexiCubes is a high-quality isosurface representation specifically designed for
 
 ## Getting Started
 
-The core functions of FlexiCubes are in `flexicubes.py`. To use FlexiCubes for your optimization tasks, you can directly copy `flexicubes.py` and `tables.py` into your project. It requires Python 3.6+, Cuda 11.3+ and PyTorch 1.10+. (Tested in Anaconda3 with Python 3.9 and PyTorch 1.11.)
+The core functions of FlexiCubes are now in [Kaolin](https://github.com/NVIDIAGameWorks/kaolin/) starting from v0.15.0. See installation instructions [here](https://kaolin.readthedocs.io/en/latest/notes/installation.html) and API documentations [here](https://kaolin.readthedocs.io/en/latest/modules/kaolin.non_commercial.html#kaolin.non_commercial.FlexiCubes)
+
+The original code of the paper is still visible in `flexicube.py`.
 
 ## Example Usage
 
@@ -25,10 +27,10 @@ To run the examples, it is suggested to install the Conda environment as detaile
 ```sh
 conda create -n flexicubes python=3.9
 conda activate flexicubes
-conda install pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 cudatoolkit=11.3 -c pytorch
+conda install pytorch==1.12.0 torchvision==0.13.0 torchaudio==0.12.0 cudatoolkit=11.3 -c pytorch
 pip install imageio trimesh tqdm matplotlib torch_scatter ninja
 pip install git+https://github.com/NVlabs/nvdiffrast/
-pip install kaolin==0.13.0 -f https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-1.11.0_cu113.html
+pip install kaolin==0.15.0 -f https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-1.12.0_cu113.html
 ```
 
 Then download the dataset collected by [Myles et al.](https://vcg.isti.cnr.it/Publications/2014/MPZ14/) as follows. We include one shape in 'examples/data/inputmodels/block.obj' if you want to test without downloading the full dataset.
