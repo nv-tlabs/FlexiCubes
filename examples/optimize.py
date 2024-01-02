@@ -15,6 +15,7 @@ from util import *
 import render
 import loss
 import imageio
+import kaolin as kal
 
 import sys
 sys.path.append('..')
@@ -51,8 +52,13 @@ if __name__ == "__main__":
     glctx = dr.RasterizeGLContext()
     
     # Load GT mesh
-    gt_mesh = load_mesh(FLAGS.ref_mesh, device)
-    gt_mesh.auto_normals() # compute face normals for visualization
+    gt_mesh = kal.io.obj.import_mesh(FLAGS.ref_mesh).to(device)
+    
+    vertices = gt_mesh.vertices
+    vmin, vmax = vertices.min(dim=0)[0], vertices.max(dim=0)[0]
+    scale = 1.8 / torch.max(vmax - vmin).item()
+    vertices = vertices - (vmax + vmin) / 2 # Center mesh on origin
+    gt_mesh.vertices = vertices * scale # Rescale to [-0.9, 0.9]
     
     # ==============================================================================================
     #  Create and initialize FlexiCubes
@@ -85,15 +91,15 @@ if __name__ == "__main__":
     for it in range(FLAGS.iter): 
         optimizer.zero_grad()
         # sample random camera poses
-        mv, mvp = render.get_random_camera_batch(FLAGS.batch, iter_res=FLAGS.train_res, device=device)
+        cameras = render.get_random_camera_batch(FLAGS.batch, iter_res=FLAGS.train_res, device=device)
         # render gt mesh
-        target = render.render_mesh(gt_mesh, mv, mvp, FLAGS.train_res)
+        target = render.render_mesh(gt_mesh, cameras, FLAGS.train_res)
         # extract and render FlexiCubes mesh
         grid_verts = x_nx3 + (2-1e-8) / (FLAGS.voxel_grid_res * 2) * torch.tanh(deform)
         vertices, faces, L_dev = fc(grid_verts, sdf, cube_fx8, FLAGS.voxel_grid_res, beta_fx12=weight[:,:12], alpha_fx8=weight[:,12:20],
             gamma_f=weight[:,20], training=True)
-        flexicubes_mesh = Mesh(vertices, faces)
-        buffers = render.render_mesh(flexicubes_mesh, mv, mvp, FLAGS.train_res)
+        flexicubes_mesh = kal.rep.SurfaceMesh(vertices=vertices, faces=faces)
+        buffers = render.render_mesh(flexicubes_mesh, cameras, FLAGS.train_res)
         
         # evaluate reconstruction loss
         mask_loss = (buffers['mask'] - target['mask']).abs().mean()
@@ -131,15 +137,14 @@ if __name__ == "__main__":
                 # extract mesh with training=False
                 vertices, faces, L_dev = fc(grid_verts, sdf, cube_fx8, FLAGS.voxel_grid_res, beta_fx12=weight[:,:12], alpha_fx8=weight[:,12:20],
                 gamma_f=weight[:,20], training=False)
-                flexicubes_mesh = Mesh(vertices, faces)
+                flexicubes_mesh = kal.rep.SurfaceMesh(vertices=vertices, faces=faces)
                 
-                flexicubes_mesh.auto_normals() # compute face normals for visualization
-                mv, mvp = render.get_rotate_camera(it//FLAGS.save_interval, iter_res=FLAGS.display_res, device=device)
-                val_buffers = render.render_mesh(flexicubes_mesh, mv.unsqueeze(0), mvp.unsqueeze(0), FLAGS.display_res, return_types=["normal"], white_bg=True)
-                val_image = ((val_buffers["normal"][0].detach().cpu().numpy()+1)/2*255).astype(np.uint8)
+                camera = render.get_rotate_camera(it//FLAGS.save_interval, iter_res=FLAGS.display_res, device=device)
+                val_buffers = render.render_mesh(flexicubes_mesh, camera, FLAGS.display_res, return_types=["normals"], white_bg=True)
+                val_image = ((val_buffers["normals"][0].detach().cpu().numpy()+1)/2*255).astype(np.uint8)
                 
-                gt_buffers = render.render_mesh(gt_mesh, mv.unsqueeze(0), mvp.unsqueeze(0), FLAGS.display_res, return_types=["normal"], white_bg=True)
-                gt_image = ((gt_buffers["normal"][0].detach().cpu().numpy()+1)/2*255).astype(np.uint8)
+                gt_buffers = render.render_mesh(gt_mesh, camera, FLAGS.display_res, return_types=["normals"], white_bg=True)
+                gt_image = ((gt_buffers["normals"][0].detach().cpu().numpy()+1)/2*255).astype(np.uint8)
                 imageio.imwrite(os.path.join(FLAGS.out_dir, '{:04d}.png'.format(it)), np.concatenate([val_image, gt_image], 1))
                 print(f"Optimization Step [{it}/{FLAGS.iter}], Loss: {total_loss.item():.4f}")
             
