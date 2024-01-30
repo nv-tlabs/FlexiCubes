@@ -9,6 +9,7 @@ import numpy as np
 import torch
 import trimesh
 import kaolin
+import nvdiffrast.torch as dr
 
 ###############################################################################
 # Functions adapted from https://github.com/NVlabs/nvdiffrec
@@ -99,3 +100,23 @@ def sample_random_points(n, mesh):
     pts_surface += torch.randn_like(pts_surface) * 0.05
     pts = torch.cat([pts_random, pts_surface])
     return pts
+
+def xfm_points(points, matrix):
+    '''Transform points.
+    Args:
+        points: Tensor containing 3D points with shape [minibatch_size, num_vertices, 3] or [1, num_vertices, 3]
+        matrix: A 4x4 transform matrix with shape [minibatch_size, 4, 4]
+        use_python: Use PyTorch's torch.matmul (for validation)
+    Returns:
+        Transformed points in homogeneous 4D with shape [minibatch_size, num_vertices, 4].
+    '''
+    out = torch.matmul(
+        torch.nn.functional.pad(points, pad=(0, 1), mode='constant', value=1.0), torch.transpose(matrix, 1, 2))
+    if torch.is_anomaly_enabled():
+        assert torch.all(torch.isfinite(out)), "Output of xfm_points contains inf or NaN"
+    return out
+
+def interpolate(attr, rast, attr_idx, rast_db=None):
+    return dr.interpolate(
+        attr, rast, attr_idx, rast_db=rast_db,
+        diff_attrs=None if rast_db is None else 'all')

@@ -85,15 +85,15 @@ if __name__ == "__main__":
     for it in range(FLAGS.iter): 
         optimizer.zero_grad()
         # sample random camera poses
-        mv, mvp = render.get_random_camera_batch(FLAGS.batch, iter_res=FLAGS.train_res, device=device)
+        mv, mvp = render.get_random_camera_batch(FLAGS.batch, iter_res=FLAGS.train_res, device=device, use_kaolin=False)
         # render gt mesh
-        target = render.render_mesh(gt_mesh, mv, mvp, FLAGS.train_res)
+        target = render.render_mesh_paper(gt_mesh, mv, mvp, FLAGS.train_res)
         # extract and render FlexiCubes mesh
         grid_verts = x_nx3 + (2-1e-8) / (FLAGS.voxel_grid_res * 2) * torch.tanh(deform)
         vertices, faces, L_dev = fc(grid_verts, sdf, cube_fx8, FLAGS.voxel_grid_res, beta_fx12=weight[:,:12], alpha_fx8=weight[:,12:20],
             gamma_f=weight[:,20], training=True)
         flexicubes_mesh = Mesh(vertices, faces)
-        buffers = render.render_mesh(flexicubes_mesh, mv, mvp, FLAGS.train_res)
+        buffers = render.render_mesh_paper(flexicubes_mesh, mv, mvp, FLAGS.train_res)
         
         # evaluate reconstruction loss
         mask_loss = (buffers['mask'] - target['mask']).abs().mean()
@@ -134,11 +134,11 @@ if __name__ == "__main__":
                 flexicubes_mesh = Mesh(vertices, faces)
                 
                 flexicubes_mesh.auto_normals() # compute face normals for visualization
-                mv, mvp = render.get_rotate_camera(it//FLAGS.save_interval, iter_res=FLAGS.display_res, device=device)
-                val_buffers = render.render_mesh(flexicubes_mesh, mv.unsqueeze(0), mvp.unsqueeze(0), FLAGS.display_res, return_types=["normal"], white_bg=True)
+                mv, mvp = render.get_rotate_camera(it//FLAGS.save_interval, iter_res=FLAGS.display_res, device=device,use_kaolin=False)
+                val_buffers = render.render_mesh_paper(flexicubes_mesh, mv.unsqueeze(0), mvp.unsqueeze(0), FLAGS.display_res, return_types=["normal"], white_bg=True)
                 val_image = ((val_buffers["normal"][0].detach().cpu().numpy()+1)/2*255).astype(np.uint8)
                 
-                gt_buffers = render.render_mesh(gt_mesh, mv.unsqueeze(0), mvp.unsqueeze(0), FLAGS.display_res, return_types=["normal"], white_bg=True)
+                gt_buffers = render.render_mesh_paper(gt_mesh, mv.unsqueeze(0), mvp.unsqueeze(0), FLAGS.display_res, return_types=["normal"], white_bg=True)
                 gt_image = ((gt_buffers["normal"][0].detach().cpu().numpy()+1)/2*255).astype(np.uint8)
                 imageio.imwrite(os.path.join(FLAGS.out_dir, '{:04d}.png'.format(it)), np.concatenate([val_image, gt_image], 1))
                 print(f"Optimization Step [{it}/{FLAGS.iter}], Loss: {total_loss.item():.4f}")
