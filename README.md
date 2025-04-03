@@ -81,11 +81,15 @@ FlexiCubes is now integrated into NVIDIA applications as a drop-in replacement f
 
 
 ## License
-Copyright (c) 2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. 
 
-This work is made available under the [Nvidia Source Code License](LICENSE.txt).
+This work is made available under the [Apache License 2.0](LICENSE.txt).
 
-For business inquiries, please visit our website and submit the form: [NVIDIA Research Licensing](https://www.nvidia.com/en-us/research/inquiries/).
+## Contributing
+
+This project uses the [Developer Certificate of Origin 1.1](https://developercertificate.org/) to manage contributions.
+
+By submitting a pull request, you certify that you agree to the terms of the DCO. See [DCO.txt](./DCO.txt) for details.
 
 ## Citation
 ```bibtex
