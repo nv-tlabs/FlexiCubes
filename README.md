@@ -13,7 +13,7 @@ FlexiCubes is a high-quality isosurface representation specifically designed for
 
 ## Getting Started
 
-The core functions of FlexiCubes are now in [Kaolin](https://github.com/NVIDIAGameWorks/kaolin/) starting from v0.15.0. See installation instructions [here](https://kaolin.readthedocs.io/en/latest/notes/installation.html) and API documentations [here](https://kaolin.readthedocs.io/en/latest/modules/kaolin.non_commercial.html#kaolin.non_commercial.FlexiCubes)
+The core functions of FlexiCubes are now in [Kaolin](https://github.com/NVIDIAGameWorks/kaolin/) starting from v0.15.0. See installation instructions [here](https://kaolin.readthedocs.io/en/latest/notes/installation.html) and API documentations [here](https://kaolin.readthedocs.io/en/latest/modules/kaolin.ops.conversions.html?highlight=flexicubes#kaolin.ops.conversions.FlexiCubes)
 
 The original code of the paper is still visible in `flexicube.py`.
 
